@@ -7,6 +7,22 @@
                 img {
                     filter: hue-rotate(90deg);
                 }
+                        
+                                        img {
+                    animation: rotation 20s infinite linear;
+                }
+
+                @keyframes rotation {
+                    from {
+                        filter: hue-rotate(0deg);
+                    }
+                    50% {
+                      
+                    }
+                    to {
+                        filter: hue-rotate(359deg);
+                    }
+                }
               </style>
             </head>
             <body style="background: #1E171A; color: #aaa; font-style: italic; font-family: sans-serif; height: 100%; display: flex; justify-content: center; align-items: center; ">
