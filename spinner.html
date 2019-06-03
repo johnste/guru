@@ -1,0 +1,231 @@
+<html>
+
+<head>
+
+    <script src="https://unpkg.com/zdog@1/dist/zdog.dist.min.js"></script>
+    <style>
+        body {
+            background:  RGBA(29, 23, 26, 1.00);
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100vh;
+            }
+            .zdog-canvas {
+              background: RGBA(29, 23, 26, 1.00);
+              cursor: move;
+              animation: hue-rotation 6s infinite linear reverse;
+              width: 100%;
+              height: 100%;
+            }
+
+
+
+            @keyframes hue-rotation {
+              from {
+                filter: hue-rotate(0deg);
+              }
+              to {
+                filter: hue-rotate(359deg);
+              }
+            }
+
+    </style>
+
+</head>
+
+<body>
+    <svg class="zdog-canvas" width="1250" height="1250"></svg>
+  <script>
+        // Made with Zdog
+
+let illo = new Zdog.Illustration({
+  element: ".zdog-canvas",
+  dragRotate: true,
+  scale: 3
+});
+
+const props = {
+  addTo: illo,
+  stroke: 10 * 3,
+  closed: false,
+  color: "#fff"
+};
+
+const lprops = {
+  ...props,
+  stroke: 11 * 3
+};
+
+const u = new Zdog.Shape({
+  ...props,
+  path: [
+    { x: 18, y: -20 },
+    { x: 18, y: 15 },
+    {
+      arc: [
+        { x: 18, y: 20 }, // corner
+        { x: 13, y: 20 } // end point
+      ]
+    },
+    { x: -4, y: 20 },
+    { move: { x: -16, y: 10 } },
+    { x: -16, y: -20 }
+  ]
+});
+
+const inner = [
+  "RGBA(99, 205, 250, 1.00)",
+  "RGBA(72, 72, 76, 1.00)",
+  "RGBA(72, 72, 76, 1.00)",
+  "RGBA(87, 59, 237, 1.00)"
+].map((color, i) => {
+  var group = new Zdog.Group({
+    addTo: illo,
+    rotate: { z: Math.PI * i / 2 }
+  });
+
+  new Zdog.Shape({
+    ...lprops,
+    addTo: group,
+    path: [
+      { x: 54, y: -40 }, // start
+      {
+        arc: [
+          { x: 85, y: 0 }, // corner
+          { x: 56, y: 35 } // end point
+        ]
+      }
+    ],
+
+    color
+  });
+
+  new Zdog.Shape({
+    addTo: group,
+    // no path set, default to single point
+    path: [{ x: 56, y: 35 }],
+    stroke: 33,
+    color: "rgba(0,0,0,0.2)"
+  });
+  return group;
+});
+
+const mid = [
+  "RGBA(87, 59, 237, 1.00)",
+  "RGBA(99, 205, 250, 1.00)",
+  "RGBA(87, 59, 237, 1.00)",
+  "RGBA(72, 72, 76, 1.00)"
+].map((color, i) => {
+  var group = new Zdog.Group({
+    addTo: illo,
+    rotate: { z: Math.PI * i / 2 }
+  });
+
+  new Zdog.Shape({
+    ...lprops,
+    addTo: group,
+    path: [
+      { x: 92, y: -0 }, // start
+      {
+        arc: [
+          { x: 94, y: 72 }, // corner
+          { x: 24, y: 89 } // end point
+        ]
+      }
+    ],
+    color
+  });
+
+  new Zdog.Shape({
+    addTo: group,
+    // no path set, default to single point
+    path: [{ x: 24, y: 89 }],
+    stroke: 33,
+    color: "rgba(0,0,0,0.2)"
+  });
+
+  return group;
+});
+
+const outer = [
+  "RGBA(111, 213, 191, 1.00)",
+  "RGBA(72, 72, 76, 1.00)",
+  "RGBA(99, 205, 250, 1.00)",
+  "RGBA(87, 59, 237, 1.00)"
+].map((color, i) => {
+  var group = new Zdog.Group({
+    addTo: illo,
+    rotate: { z: Math.PI * i / 2 }
+  });
+
+  new Zdog.Shape({
+    ...lprops,
+    addTo: group,
+    path: [
+      { x: 107, y: -50 }, // start
+      {
+        arc: [
+          { x: 150, y: 39 }, // corner
+          { x: 71, y: 95 } // end point
+        ]
+      }
+    ],
+    color
+  });
+
+  new Zdog.Shape({
+    addTo: group,
+    // no path set, default to single point
+    path: [{ x: 71, y: 95 }],
+    stroke: 33,
+    color: "rgba(0,0,0,0.2)"
+  });
+
+  return group;
+});
+
+let acceleration = 1;
+let current = 0.4;
+let start = Date.now()
+function animate() {
+
+  //illo.rotate.y -= current * 0.01;
+ //illo.rotate.x -= current * 0.013;
+  acceleration = Math.abs(Math.sin(0.01 + (Date.now() - start) / 2500) / 5);
+
+  if (acceleration > 0.1 || acceleration < 0.1) {
+    u.rotate.y -= 0.1* Math.abs(acceleration) / 2;
+    illo.rotate.y += 0.1* Math.abs(acceleration);
+  }
+
+
+
+  inner.forEach(o => {
+    o.rotate.z += acceleration;
+    o.rotate.x += acceleration / 22;
+    o.translate.z = -Math.abs(acceleration) * 50;
+
+  });
+  mid.forEach(o => {
+    o.rotate.z -= acceleration;
+    o.rotate.x += acceleration / 33;
+    o.translate.z = -Math.abs(acceleration) * 100;
+
+  });
+  outer.forEach(o => {
+    o.rotate.z += acceleration;
+    o.rotate.x += acceleration / 44;
+    o.translate.z = -Math.abs(acceleration) * 150;
+
+  });
+  illo.updateRenderGraph();
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+    </script>
+</body>
+
+</html>
